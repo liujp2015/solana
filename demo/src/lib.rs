@@ -3,7 +3,7 @@ use solana_program::{account_info::AccountInfo, entrypoint,entrypoint::ProgramRe
 entrypoint!(process_instruction);
 
 pub fn process_instruction(
-    program_id: Pubkey,
+    program_id: &Pubkey,
     accounts: &[AccountInfo],
     data: &[u8],
 ) -> ProgramResult {
