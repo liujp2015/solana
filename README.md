@@ -1,1 +1,6 @@
 # solana
+
+Using wallet: HrtpX9i98XBUfuZfsZnW1cSAGtW1z32eMxDEfyKAujXV
+PDA address: HvAK5vgL4zuQXNeRcMMvX2pxwsg6RBHwsSqUbD3xarrg
+✅ Success! TX: 3PKnp9KezLD54L4rzFtHEGQ5JJ2t1tJddFgjwZZqMeZ4rApaweVbygkE4QmGCqUDE8ns9XTikMq6fpfXongKYX6V
+🔗 https://explorer.solana.com/tx/3PKnp9KezLD54L4rzFtHEGQ5JJ2t1tJddFgjwZZqMeZ4rApaweVbygkE4QmGCqUDE8ns9XTikMq6fpfXongKYX6V?cluster=devnet
