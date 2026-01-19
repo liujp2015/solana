@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-pxsol_ss_anchor = "2KzMeNKbe8pKqT9aMhQpQuNHH9JkMFwNNANxQHvUoCko"
+pxsol_ss_anchor = "HCMXPF8jiyJsBURriezgnUYMAigUXMN8RNy7zgGPDgMQ"
 
 [registry]
 url = "https://api.apr.dev"

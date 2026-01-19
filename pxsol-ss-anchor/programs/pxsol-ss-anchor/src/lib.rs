@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 use anchor_lang::system_program;
 
 
-declare_id!("2KzMeNKbe8pKqT9aMhQpQuNHH9JkMFwNNANxQHvUoCko");
+declare_id!("HCMXPF8jiyJsBURriezgnUYMAigUXMN8RNy7zgGPDgMQ");
 
 #[program]
 pub mod pxsol_ss_anchor {
