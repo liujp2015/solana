@@ -11,7 +11,7 @@ describe("pxsol-ss-anchor", () => {
   const walletPda = anchor.web3.PublicKey.findProgramAddressSync(
     [Buffer.from("seeds"), wallet.publicKey.toBuffer()],
     program.programId
-  )[0];
+  )[0] as anchor.web3.PublicKey;
 
   it("Init with content and then update (grow and shrink)", async () => {
     // Airdrop SOL to fresh authority to fund rent and tx fees
