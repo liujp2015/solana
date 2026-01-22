@@ -1,6 +1,15 @@
 [package]
 name = "counter-pinocchio"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]  # 必须是 cdylib，Solana 要求
 
 [dependencies]
+# 使用 Pinocchio（目前需从 Git 引入）
+pinocchio = { git = "https://github.com/anza-xyz/pinocchio", rev = "main" }
+
+# 禁用标准库（Solana 程序运行在 no_std 环境）
+[features]
+default = []
