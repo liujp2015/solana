@@ -1,0 +1,12 @@
+[package]
+name = "pinocchio_demo"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]  # 必须！生成 .so 文件
+
+[dependencies]
+# 使用 Pinocchio 框架（来自 GitHub）
+pinocchio = { git = "https://github.com/ellipsis-labs/pinocchio.git", rev = "v0.3.0" }
+solana-program = "1.18"

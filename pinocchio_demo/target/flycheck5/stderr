@@ -1,0 +1,23 @@
+    Blocking waiting for file lock on package cache
+    Updating git repository `https://github.com/ellipsis-labs/pinocchio.git`
+error: failed to get `pinocchio` as a dependency of package `pinocchio_demo v0.1.0 (/home/ljp/solana/pinocchio_demo)`
+
+Caused by:
+  failed to load source for dependency `pinocchio`
+
+Caused by:
+  Unable to update https://github.com/ellipsis-labs/pinocchio.git?rev=v0.3.0
+
+Caused by:
+  failed to fetch into: /home/ljp/.cargo/git/db/pinocchio-35bf5cf982bf56f3
+
+Caused by:
+  failed to authenticate when downloading repository
+
+  * attempted to find username/password via git's `credential.helper` support, but failed
+
+  if the git CLI succeeds then `net.git-fetch-with-cli` may help here
+  https://doc.rust-lang.org/cargo/reference/config.html#netgit-fetch-with-cli
+
+Caused by:
+  failed to acquire username/password from local configuration
