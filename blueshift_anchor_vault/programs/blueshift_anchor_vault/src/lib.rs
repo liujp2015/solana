@@ -1,4 +1,8 @@
-use anchor_lang::prelude::*;
+use anchor_lang::{prelude::*, solana_program};
+use solana_program::{
+    program::{invoke_signed},
+    system_instruction,
+};
 
 declare_id!("22222222222222222222222222222222222222222222");
 
@@ -7,43 +11,58 @@ pub mod blueshift_anchor_vault {
     use super::*;
 
     pub fn deposit(ctx: Context<VaultAction>, amount: u64) -> Result<()> {
-        // Check if vault is empty
-        require_eq!(ctx.accounts.vault.lamports(), 0, VaultError::VaultAlreadyExists);
-        // Ensure amount exceeds rent-exempt minimum
-        require_gt!(amount, Rent::get()?.minimum_balance(0), VaultError::InvalidAmount);
+        // Ensure amount is valid
+        require_gt!(amount, 0, VaultError::InvalidAmount);
 
-        use anchor_lang::system_program::{transfer, Transfer};
-            transfer(
-                CpiContext::new(
-                    ctx.accounts.system_program.to_account_info(),
-                    Transfer {
-                        from: ctx.accounts.signer.to_account_info(),
-                        to: ctx.accounts.vault.to_account_info(),
-                    },
-                ),
-                amount,
-            )?;
+        // Transfer SOL from signer to vault PDA
+        let transfer_ix = system_instruction::transfer(
+            ctx.accounts.signer.key,
+            ctx.accounts.vault.key,
+            amount,
+        );
+
+        invoke_signed(
+            &transfer_ix,
+            &[
+                ctx.accounts.signer.to_account_info(),
+                ctx.accounts.vault.to_account_info(),
+                ctx.accounts.system_program.to_account_info(),
+            ],
+            &[],
+        )?;
+
         Ok(())
     }
 
     pub fn withdraw(ctx: Context<VaultAction>) -> Result<()> {
-       // Check if vault has any lamports
-        require_neq!(ctx.accounts.vault.lamports(), 0, VaultError::InvalidAmount);
-        // Create PDA signer seeds
-        let signer_key = ctx.accounts.signer.key();
-        let signer_seeds = &[b"vault", signer_key.as_ref(), &[ctx.bumps.vault]];
-        // Transfer all lamports from vault to signer
-        transfer(
-            CpiContext::new_with_signer(
+        let vault_lamports = ctx.accounts.vault.lamports();
+        require_gt!(vault_lamports, 0, VaultError::InvalidAmount);
+    
+        // Build the seed slice correctly - note the different structure
+        let signer_seeds: &[&[&[u8]]] = &[
+            &[
+                b"vault",
+                ctx.accounts.signer.key.as_ref(),
+                &[ctx.bumps.vault],
+            ],
+        ];
+    
+        let transfer_ix = system_instruction::transfer(
+            ctx.accounts.vault.key,
+            ctx.accounts.signer.key,
+            vault_lamports,
+        );
+    
+        invoke_signed(
+            &transfer_ix,
+            &[
+                ctx.accounts.vault.to_account_info(),
+                ctx.accounts.signer.to_account_info(),
                 ctx.accounts.system_program.to_account_info(),
-                Transfer {
-                    from: ctx.accounts.vault.to_account_info(),
-                    to: ctx.accounts.signer.to_account_info(),
-                },
-                &[&signer_seeds[..]]
-            ),
-            ctx.accounts.vault.lamports()
+            ],
+            signer_seeds,
         )?;
+    
         Ok(())
     }
 }
@@ -57,15 +76,12 @@ pub struct VaultAction<'info> {
         seeds = [b"vault", signer.key().as_ref()],
         bump,
     )]
-    pub vault: SystemAccount<'info>,
+    pub vault: SystemAccount<'info>, // Better to use SystemAccount instead of UncheckedAccount
     pub system_program: Program<'info, System>,
 }
 
 #[error_code]
 pub enum VaultError {
-    #[msg("Vault already exists")]
-    VaultAlreadyExists,
     #[msg("Invalid amount")]
     InvalidAmount,
 }
-
