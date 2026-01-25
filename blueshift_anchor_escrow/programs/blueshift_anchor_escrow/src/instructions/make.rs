@@ -1,3 +1,5 @@
+use anchor_lang::Accounts;
+
 #[derive(Accounts)]
 #[instruction(seed: u64)]
 pub struct Make<'info> {

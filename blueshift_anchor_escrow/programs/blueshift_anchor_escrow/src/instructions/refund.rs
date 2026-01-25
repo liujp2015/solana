@@ -15,15 +15,28 @@ pub struct refund<'info> {
     )]
     pub escrow: Box<Account<'info, Escrow>>,
 
-    mint_a：maker 存入的代币
+    pub mint_a: Box<InterfaceAccount<'info, Mint>>,
+    
+    #[account(
+        mut,
+        associated_token::mint = mint_a,
+        associated_token::authority = escrow,
+        associated_token::token_program = token_program
+    )]
+    pub vault: Box<InterfaceAccount<'info, TokenAccount>>,
+   
 
-    vault：与 escrow 和 mint_a 关联的代币账户，代币已存入其中
 
-    maker_ata_a：与 maker 和 mint_a 关联的代币账户，将从 vault 接收代币
+    #[account(
+        mut,
+        associated_token::mint = mint_a,
+        associated_token::authority = maker,
+        associated_token::token_program = token_program
+    )]
+    pub maker_ata_a: InterfaceAccount<'info, TokenAccount>,
 
-    associated_token_program：用于创建关联代币账户的关联代币程序
-
-    token_program：用于 CPI 转账的代币程序
-
-    system_program：用于创建 Escrow 的系统程序
+    /// Programs
+    pub associated_token_program: Program<'info, AssociatedToken>,
+    pub token_program: Interface<'info, TokenInterface>,
+    pub system_program: Program<'info, System>,
 }
