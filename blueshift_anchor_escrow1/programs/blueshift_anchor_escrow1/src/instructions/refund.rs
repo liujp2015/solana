@@ -1,9 +1,13 @@
 use anchor_lang::prelude::*;
+use anchor_spl::token_interface::{Mint, TokenAccount, TokenInterface};
+use anchor_spl::associated_token::AssociatedToken;
+use crate::state::Escrow;
+use crate::errors::EscrowError;
 
 
 
 #[derive(Accounts)]
-pub struct refund<'info> {
+pub struct Refund<'info> {
 
     #[account(mut)]
      pub maker: SystemAccount<'info>,
@@ -15,7 +19,6 @@ pub struct refund<'info> {
         bump = escrow.bump,
         has_one = maker @ EscrowError::InvalidMaker,
         has_one = mint_a @ EscrowError::InvalidMintA,
-        has_one = mint_b @ EscrowError::InvalidMintB,
     )]
     pub escrow: Box<Account<'info, Escrow>>,
 
@@ -45,7 +48,7 @@ pub struct refund<'info> {
     pub system_program: Program<'info, System>,
 }
 
-impl<'info> Take<'info> {
+impl<'info> Refund<'info> {
 
     fn refund_and_close_vault(&mut self) -> Result<()> {
         // Create the signer seeds for the Vault
@@ -56,10 +59,10 @@ impl<'info> Take<'info> {
             &[self.escrow.bump],
         ]];
         // Transfer Token A (Vault -> Taker)
-        transfer_checked(
+        anchor_spl::token_interface::transfer_checked(
             CpiContext::new_with_signer(
                 self.token_program.to_account_info(),
-                TransferChecked {
+                anchor_spl::token_interface::TransferChecked {
                     from: self.vault.to_account_info(),
                     to: self.maker_ata_a.to_account_info(),
                     mint: self.mint_a.to_account_info(),
@@ -71,9 +74,9 @@ impl<'info> Take<'info> {
             self.mint_a.decimals,
         )?;
         // Close the Vault
-        close_account(CpiContext::new_with_signer(
+        anchor_spl::token_interface::close_account(CpiContext::new_with_signer(
             self.token_program.to_account_info(),
-            CloseAccount {
+            anchor_spl::token_interface::CloseAccount {
                 account: self.vault.to_account_info(),
                 authority: self.escrow.to_account_info(),
                 destination: self.maker.to_account_info(),
@@ -82,10 +85,11 @@ impl<'info> Take<'info> {
         ))?;
         Ok(())
     }
-    pub fn handler(ctx: Context<Take>) -> Result<()> {
-   
-        // refund and close the Vault
-        ctx.accounts.refund_and_close_vault()?;
-        Ok(())
-    }
+}
+
+pub fn handler(ctx: Context<Refund>) -> Result<()> {
+    
+    // refund and close the Vault
+    ctx.accounts.refund_and_close_vault()?;
+    Ok(())
 }

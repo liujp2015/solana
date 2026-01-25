@@ -1,4 +1,8 @@
 use anchor_lang::prelude::*;
+use anchor_spl::token_interface::{Mint, TokenAccount, TokenInterface};
+use anchor_spl::associated_token::AssociatedToken;
+use crate::state::Escrow;
+use crate::errors::EscrowError;
 
 
 #[derive(Accounts)]
@@ -63,10 +67,10 @@ impl<'info> Make<'info> {
 
     /// # Deposit the tokens
     fn deposit_tokens(&self, amount: u64) -> Result<()> {
-        transfer_checked(
+        anchor_spl::token_interface::transfer_checked(
             CpiContext::new(
                 self.token_program.to_account_info(),
-                TransferChecked {
+                anchor_spl::token_interface::TransferChecked {
                     from: self.maker_ata_a.to_account_info(),
                     mint: self.mint_a.to_account_info(),
                     to: self.vault.to_account_info(),
@@ -80,17 +84,18 @@ impl<'info> Make<'info> {
         Ok(())
     }
 
-    pub fn handler(ctx: Context<Make>, seed: u64, receive: u64, amount: u64) -> Result<()> {
-        // Validate the amount
-        require_gt!(receive, 0, EscrowError::InvalidAmount);
-        require_gt!(amount, 0, EscrowError::InvalidAmount);
-    
-        // Save the Escrow Data
-        ctx.accounts.populate_escrow(seed, receive, ctx.bumps.escrow)?;
-    
-        // Deposit Tokens
-        ctx.accounts.deposit_tokens(amount)?;
-    
-        Ok(())
-    }
+}
+
+pub fn handler(ctx: Context<Make>, seed: u64, receive: u64, amount: u64) -> Result<()> {
+    // Validate the amount
+    require_gt!(receive, 0, EscrowError::InvalidAmount);
+    require_gt!(amount, 0, EscrowError::InvalidAmount);
+
+    // Save the Escrow Data
+    ctx.accounts.populate_escrow(seed, receive, ctx.bumps.escrow)?;
+
+    // Deposit Tokens
+    ctx.accounts.deposit_tokens(amount)?;
+
+    Ok(())
 }

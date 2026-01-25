@@ -1,5 +1,7 @@
 use anchor_lang::prelude::*;
-
+use anchor_spl::token_interface::{Mint, TokenAccount, TokenInterface};
+use anchor_spl::associated_token::AssociatedToken;
+use crate::state::Escrow;
 use crate::errors::EscrowError;
 
 
@@ -62,10 +64,10 @@ pub struct Take<'info> {
 
 impl<'info> Take<'info> {
     fn transfer_to_maker(&mut self) -> Result<()> {
-        transfer_checked(
+        anchor_spl::token_interface::transfer_checked(
             CpiContext::new(
                 self.token_program.to_account_info(),
-                TransferChecked {
+                anchor_spl::token_interface::TransferChecked {
                     from: self.taker_ata_b.to_account_info(),
                     to: self.maker_ata_b.to_account_info(),
                     mint: self.mint_b.to_account_info(),
@@ -89,10 +91,10 @@ impl<'info> Take<'info> {
         ]];
 
         // Transfer Token A (Vault -> Taker)
-        transfer_checked(
+        anchor_spl::token_interface::transfer_checked(
             CpiContext::new_with_signer(
                 self.token_program.to_account_info(),
-                TransferChecked {
+                anchor_spl::token_interface::TransferChecked {
                     from: self.vault.to_account_info(),
                     to: self.taker_ata_a.to_account_info(),
                     mint: self.mint_a.to_account_info(),
@@ -105,9 +107,9 @@ impl<'info> Take<'info> {
         )?;
 
         // Close the Vault
-        close_account(CpiContext::new_with_signer(
+        anchor_spl::token_interface::close_account(CpiContext::new_with_signer(
             self.token_program.to_account_info(),
-            CloseAccount {
+            anchor_spl::token_interface::CloseAccount {
                 account: self.vault.to_account_info(),
                 authority: self.escrow.to_account_info(),
                 destination: self.maker.to_account_info(),
@@ -118,13 +120,14 @@ impl<'info> Take<'info> {
         Ok(())
     }
 
-    pub fn handler(ctx: Context<Take>) -> Result<()> {
-        // Transfer Token B to Maker
-        ctx.accounts.transfer_to_maker()?;
-    
-        // Withdraw and close the Vault
-        ctx.accounts.withdraw_and_close_vault()?;
-    
-        Ok(())
-    }
+}
+
+pub fn handler(ctx: Context<Take>) -> Result<()> {
+    // Transfer Token B to Maker
+    ctx.accounts.transfer_to_maker()?;
+
+    // Withdraw and close the Vault
+    ctx.accounts.withdraw_and_close_vault()?;
+
+    Ok(())
 }
