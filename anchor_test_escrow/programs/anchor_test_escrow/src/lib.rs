@@ -2,12 +2,13 @@ use anchor_lang::prelude::*;
 use anchor_spl::associated_token::AssociatedToken;
 use anchor_spl::token_interface::{TokenInterface, Mint, TokenAccount, transfer_checked, TransferChecked, close_account, CloseAccount};
 
-declare_id!("86HCBsigV53uNU7W44MTriPWKNDXvd76GUceDn8KbBJ8");
+declare_id!("22222222222222222222222222222222222222222222");
 
 #[program]
-pub mod anchor_test_escrow {
+pub mod blueshift_anchor_escrow  {
     use super::*;
 
+    #[instruction(discriminator = 0)]
     pub fn make(ctx: Context<Make>, seed: u64, receive: u64, amount: u64) -> Result<()> {
         require_gt!(receive, 0, EscrowError::InvalidAmount);
         require_gt!(amount, 0, EscrowError::InvalidAmount);
@@ -16,6 +17,7 @@ pub mod anchor_test_escrow {
         Ok(())
     }
 
+    #[instruction(discriminator = 1)]
     pub fn take(ctx: Context<Take>) -> Result<()> {
         // Transfer Token B to Maker
         ctx.accounts.transfer_to_maker()?;
@@ -23,7 +25,7 @@ pub mod anchor_test_escrow {
         ctx.accounts.withdraw_and_close_vault()?;
         Ok(())
     }
-
+    #[instruction(discriminator = 2)]
     pub fn refund(ctx: Context<Refund>) -> Result<()> {
         // refund and close the Vault
         ctx.accounts.refund_and_close_vault()?;
