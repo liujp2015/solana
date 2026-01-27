@@ -1,0 +1,14 @@
+[package]
+name = "blueshift_vault"
+version = "0.1.0"
+edition = "2021"
+
+
+[dependencies]
+# 使用 GitHub 上的最新主分支
+pinocchio = { git = "https://github.com/anza-xyz/pinocchio", branch = "main" }
+pinocchio-system = { git = "https://github.com/anza-xyz/pinocchio", branch = "main" }
+solana-address = "2.0.0"
+
+[lib]
+crate-type = ["lib", "cdylib"]

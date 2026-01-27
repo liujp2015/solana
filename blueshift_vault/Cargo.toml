@@ -1,0 +1,11 @@
+[package]
+name = "blueshift_vault"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+pinocchio = { git = "https://github.com/ellipsis-labs/pinocchio", rev = "main" }
+pinocchio-system = { git = "https://github.com/ellipsis-labs/pinocchio", rev = "main" }
+
+[lib]
+crate-type = ["lib", "cdylib"]
