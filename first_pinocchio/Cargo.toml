@@ -1,0 +1,12 @@
+[package]
+name = "my_solana_program"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+pinocchio = "0.10.1"
+pinocchio-system = "0.5.0"
+solana-program = "1.18"  # 请根据当前 Solana 版本调整
+
+[lib]
+crate-type = ["lib", "cdylib"]
