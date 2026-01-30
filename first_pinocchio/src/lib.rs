@@ -1,7 +1,7 @@
 use pinocchio::{AccountView, Address, ProgramResult, entrypoint, error::ProgramError};
 use solana_address::declare_id;
 
-use crate::instructions::Deposit;
+use crate::instructions::VaultContext;
 
 entrypoint!(process_instruction);
 
@@ -16,8 +16,8 @@ fn process_instruction(
 ) -> ProgramResult{
     let (discriminator, instruction_data): (&u8, &[u8]) = instruction_data.split_first().ok_or(ProgramError::InvalidInstructionData)?;
     match  *discriminator {
-        0 => Deposit::try_from((accounts,instruction_data))?.process(),
-        1 => Ok(()),
+        0 => VaultContext::try_from((accounts,instruction_data))?.deposit(),
+        1 => VaultContext::try_from((accounts,instruction_data))?.withdraw(),
         _ => Err(ProgramError::InvalidInstructionData)
     }
    
