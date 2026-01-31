@@ -1,5 +1,5 @@
 [package]
-name = "my_solana_program"
+name = "blueshift_vault"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,6 +9,11 @@ pinocchio-system = "0.5.0"
 solana-address = {version="2.0.0", features = ["curve25519"]}
 solana-program = "1.18"  # 请根据当前 Solana 版本调整
 solana-program-log = "1.1.0"
+
+[dev-dependencies]
+solana-program-test = "1.18"
+solana-sdk = "1.18"
+tokio = { version = "1", features = ["full"] }
 
 [lib]
 crate-type = ["lib", "cdylib"]
