@@ -1,21 +1,21 @@
-use pinocchio::{program_error::ProgramError, pubkey::Pubkey};
+use pinocchio::{error::ProgramError, Address};
 use core::mem::size_of;
 
 #[repr(C)]
 pub struct Escrow {
     pub seed: u64,        // Random seed for PDA derivation
-    pub maker: Pubkey,    // Creator of the escrow
-    pub mint_a: Pubkey,   // Token being deposited
-    pub mint_b: Pubkey,   // Token being requested
+    pub maker: Address,   // Creator of the escrow
+    pub mint_a: Address,  // Token being deposited
+    pub mint_b: Address,  // Token being requested
     pub receive: u64,     // Amount of token B wanted
     pub bump: [u8;1]      // PDA bump seed
 }
 
 impl Escrow {
     pub const LEN: usize = size_of::<u64>() 
-    + size_of::<Pubkey>() 
-    + size_of::<Pubkey>() 
-    + size_of::<Pubkey>() 
+    + size_of::<Address>() 
+    + size_of::<Address>() 
+    + size_of::<Address>() 
     + size_of::<u64>()
     + size_of::<[u8;1]>();
 
@@ -41,17 +41,17 @@ impl Escrow {
     }
 
     #[inline(always)]
-    pub fn set_maker(&mut self, maker: Pubkey) {
+    pub fn set_maker(&mut self, maker: Address) {
         self.maker = maker;
     }
 
     #[inline(always)]
-    pub fn set_mint_a(&mut self, mint_a: Pubkey) {
+    pub fn set_mint_a(&mut self, mint_a: Address) {
         self.mint_a = mint_a;
     }
 
     #[inline(always)]
-    pub fn set_mint_b(&mut self, mint_b: Pubkey) {
+    pub fn set_mint_b(&mut self, mint_b: Address) {
         self.mint_b = mint_b;
     }
 
@@ -66,7 +66,7 @@ impl Escrow {
     }
 
     #[inline(always)]
-    pub fn set_inner(&mut self, seed: u64, maker: Pubkey, mint_a: Pubkey, mint_b: Pubkey, receive: u64, bump: [u8;1]) {
+    pub fn set_inner(&mut self, seed: u64, maker: Address, mint_a: Address, mint_b: Address, receive: u64, bump: [u8;1]) {
         self.seed = seed;
         self.maker = maker;
         self.mint_a = mint_a;

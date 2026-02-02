@@ -1,6 +1,5 @@
     Blocking waiting for file lock on package cache
     Updating git repository `https://github.com/ellipsis-labs/pinocchio.git`
-warning: spurious network error (3 tries remaining): failed to connect to github.com: Connection timed out; class=Os (2)
 error: failed to get `pinocchio` as a dependency of package `pinocchio_demo v0.1.0 (/home/ljp/solana/pinocchio_demo)`
 
 Caused by:
